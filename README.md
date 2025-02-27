@@ -1,4 +1,22 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Apate - Appointment Scheduling App
+
+A modern, customizable appointment scheduling application built with Next.js, React, TypeScript, and TailwindCSS.
+
+## Features
+
+- **Appointment Management**: Create, edit, and delete appointments
+- **Customizable Settings**: Personalize the app with different themes, date formats, and more
+- **Responsive Design**: Works on desktop and mobile devices
+- **Dark Mode Support**: Choose between light, dark, or system theme
+- **Accessibility**: Built with accessibility in mind
+
+## Tech Stack
+
+- [Next.js 15](https://nextjs.org) - React framework
+- [React](https://reactjs.org) - UI library
+- [TypeScript](https://www.typescriptlang.org) - Type safety
+- [TailwindCSS](https://tailwindcss.com) - Styling
+- [Shadcn UI](https://ui.shadcn.com) - UI components
 
 ## Getting Started
 
@@ -16,7 +34,27 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build
+
+To build the application for production:
+
+```bash
+npm run build
+```
+
+## Customization
+
+The app includes a settings panel that allows you to customize:
+
+- Theme colors
+- Light/dark mode
+- Date and time formats
+- UI preferences
+- Accessibility options
+
+## License
+
+MIT
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
