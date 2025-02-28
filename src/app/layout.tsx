@@ -3,7 +3,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SettingsProvider } from "@/lib/settings-context";
 import { ThemeColorManager } from "@/components/theme-colors";
-import { Navbar } from "@/components/navbar";
+import { Toaster } from "sonner";
+import { BusinessProfileProvider } from "@/lib/context/business-profile-context";
+import { AppSidebar } from "@/components/app-sidebar";
+import { MobileBottomBar } from "@/components/mobile-bottom-bar";
+import { MobileHeader } from "@/components/mobile-header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,15 +34,22 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SettingsProvider>
-          <ThemeColorManager />
-          <div className="min-h-screen bg-background flex flex-col">
-            <Navbar />
-            <div className="flex-1">
-              {children}
+        <BusinessProfileProvider>
+          <SettingsProvider>
+            <ThemeColorManager />
+            <div className="min-h-screen bg-background flex flex-col md:flex-row">
+              <AppSidebar />
+              <div className="flex-1 flex flex-col">
+                <MobileHeader />
+                <div className="flex-1 p-4 md:p-6 overflow-auto pb-20 md:pb-6">
+                  {children}
+                </div>
+                <MobileBottomBar />
+              </div>
             </div>
-          </div>
-        </SettingsProvider>
+            <Toaster position="top-right" />
+          </SettingsProvider>
+        </BusinessProfileProvider>
       </body>
     </html>
   );

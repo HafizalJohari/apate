@@ -17,7 +17,7 @@ export function Navbar() {
     updateSettings({ themeMode: newTheme });
   };
   
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => pathname === path || pathname?.startsWith(path + "/");
 
   return (
     <header className="border-b">
@@ -43,6 +43,14 @@ export function Navbar() {
               }`}
             >
               Configure
+            </Link>
+            <Link 
+              href="/configure/business-profile" 
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                isActive("/configure/business-profile") ? "text-foreground" : "text-muted-foreground"
+              }`}
+            >
+              Business Profile
             </Link>
           </nav>
         </div>

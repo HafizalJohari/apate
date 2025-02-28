@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Check, Clock, Edit, Plus, Save, Trash, X } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,40 +68,60 @@ export default function ConfigurePage() {
   const addTimeSlot = () => {
     if (!newTimeSlot) return;
     
-    // Format and validate the time slot
-    let formattedSlot = newTimeSlot;
-    
-    // If it's in 24h format, convert to 12h format
-    if (/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/.test(newTimeSlot)) {
-      const [hour, minute] = newTimeSlot.split(':').map(Number);
-      const period = hour >= 12 ? 'PM' : 'AM';
-      const displayHour = hour % 12 || 12;
-      const formattedMinute = minute.toString().padStart(2, '0');
-      formattedSlot = `${displayHour}:${formattedMinute} ${period}`;
-    }
-    
-    if (!timeSlots.includes(formattedSlot)) {
-      const newSlots = [...timeSlots, formattedSlot].sort((a, b) => {
-        // Convert to 24h for sorting
-        const aTime = convertTo24Hour(a);
-        const bTime = convertTo24Hour(b);
-        return aTime.localeCompare(bTime);
-      });
-      setTimeSlots(newSlots);
-      saveTimeSlots(newSlots);
-      setNewTimeSlot("");
+    try {
+      // Format and validate the time slot
+      let formattedSlot = newTimeSlot;
+      
+      // If it's in 24h format, convert to 12h format
+      if (/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/.test(newTimeSlot)) {
+        const [hour, minute] = newTimeSlot.split(':').map(Number);
+        const period = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour % 12 || 12;
+        const formattedMinute = minute.toString().padStart(2, '0');
+        formattedSlot = `${displayHour}:${formattedMinute} ${period}`;
+      }
+      
+      if (!timeSlots.includes(formattedSlot)) {
+        const newSlots = [...timeSlots, formattedSlot].sort((a, b) => {
+          // Convert to 24h for sorting
+          const aTime = convertTo24Hour(a);
+          const bTime = convertTo24Hour(b);
+          return aTime.localeCompare(bTime);
+        });
+        setTimeSlots(newSlots);
+        saveTimeSlots(newSlots);
+        setNewTimeSlot("");
+        toast.success(`Added time slot: ${formattedSlot}`);
+      } else {
+        toast.error("This time slot already exists");
+      }
+    } catch (error) {
+      console.error("Error adding time slot:", error);
+      toast.error("Failed to add time slot");
     }
   };
   
   const removeTimeSlot = (slot: string) => {
-    const newSlots = timeSlots.filter(s => s !== slot);
-    setTimeSlots(newSlots);
-    saveTimeSlots(newSlots);
+    try {
+      const newSlots = timeSlots.filter(s => s !== slot);
+      setTimeSlots(newSlots);
+      saveTimeSlots(newSlots);
+      toast.success(`Removed time slot: ${slot}`);
+    } catch (error) {
+      console.error("Error removing time slot:", error);
+      toast.error("Failed to remove time slot");
+    }
   };
   
   const resetTimeSlots = () => {
-    setTimeSlots(defaultTimeSlots);
-    saveTimeSlots(defaultTimeSlots);
+    try {
+      setTimeSlots(defaultTimeSlots);
+      saveTimeSlots(defaultTimeSlots);
+      toast.success("Time slots reset to defaults");
+    } catch (error) {
+      console.error("Error resetting time slots:", error);
+      toast.error("Failed to reset time slots");
+    }
   };
   
   // Convert 12h format to 24h for sorting
@@ -142,38 +163,66 @@ export default function ConfigurePage() {
         updatedTypes[existingIndex] = editingType;
         setAppointmentTypes(updatedTypes);
         saveAppointmentTypes(updatedTypes);
+        toast.success(`Updated appointment type: ${label}`);
       } else {
         // Add new type
         const updatedTypes = [...appointmentTypes, editingType];
         setAppointmentTypes(updatedTypes);
         saveAppointmentTypes(updatedTypes);
+        toast.success(`Added new appointment type: ${label}`);
       }
       
       setEditingType(null);
     } catch (error) {
       console.error("Validation error:", error);
+      toast.error("Failed to save appointment type");
     }
   };
   
   const deleteAppointmentType = (id: string) => {
-    const updatedTypes = appointmentTypes.filter((t: { id: string }) => t.id !== id);
-    setAppointmentTypes(updatedTypes);
-    saveAppointmentTypes(updatedTypes);
+    try {
+      const typeToDelete = appointmentTypes.find((t: { id: string }) => t.id === id);
+      const updatedTypes = appointmentTypes.filter((t: { id: string }) => t.id !== id);
+      setAppointmentTypes(updatedTypes);
+      saveAppointmentTypes(updatedTypes);
+      toast.success(`Deleted appointment type: ${typeToDelete?.label || id}`);
+    } catch (error) {
+      console.error("Error deleting appointment type:", error);
+      toast.error("Failed to delete appointment type");
+    }
   };
   
   const resetAppointmentTypes = () => {
-    setAppointmentTypes(defaultAppointmentTypes);
-    saveAppointmentTypes(defaultAppointmentTypes);
+    try {
+      setAppointmentTypes(defaultAppointmentTypes);
+      saveAppointmentTypes(defaultAppointmentTypes);
+      toast.success("Appointment types reset to defaults");
+    } catch (error) {
+      console.error("Error resetting appointment types:", error);
+      toast.error("Failed to reset appointment types");
+    }
   };
   
   // Handle availability settings
   const onAvailabilitySubmit = (data: typeof defaultAvailabilitySettings) => {
-    saveAvailabilitySettings(data);
+    try {
+      saveAvailabilitySettings(data);
+      toast.success("Availability settings saved successfully");
+    } catch (error) {
+      console.error("Error saving availability settings:", error);
+      toast.error("Failed to save availability settings");
+    }
   };
   
   const resetAvailabilitySettings = () => {
-    availabilityForm.reset(defaultAvailabilitySettings);
-    saveAvailabilitySettings(defaultAvailabilitySettings);
+    try {
+      availabilityForm.reset(defaultAvailabilitySettings);
+      saveAvailabilitySettings(defaultAvailabilitySettings);
+      toast.success("Settings reset to defaults");
+    } catch (error) {
+      console.error("Error resetting availability settings:", error);
+      toast.error("Failed to reset settings");
+    }
   };
   
   return (
